@@ -51,13 +51,9 @@ class Vector(list):
             raise Exception('Vector div on vector not supported')
 
     def noramlized(self):
-        maxItem = max(self)
-        minItem = min(self)
-        result = self
-        if maxItem - minItem != 0:
-            # TODO: Handle cases when maxItem == minItem
-            for i, val in enumerate(self):
-                result[i] = self[i]/self.length
+        result = Vector()
+        for i, val in enumerate(self):
+            result.append(self[i]/self.length)
         return result
 
     def distance(self, vec):
