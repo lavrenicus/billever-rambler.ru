@@ -12,6 +12,8 @@ class Vector(list):
         super().__init__(*args)
 
     def __sub__(self, vec):
+        if isinstance(vec, float) or isinstance(vec, int):
+            vec = self._scalarToVector(vec)
         if len(self) != len(vec):
             raise BadParametersException('Vector dimensions mismatch')
         resultVector = []
@@ -20,6 +22,8 @@ class Vector(list):
         return Vector(resultVector)
 
     def __add__(self, vec):
+        if isinstance(vec, float) or isinstance(vec, int):
+            vec = self._scalarToVector(vec)
         if len(self) != len(vec):
             raise BadParametersException('Vector dimensions mismatch')
         resultVector = []
@@ -49,6 +53,12 @@ class Vector(list):
             return Vector([index * (1/n) for index in self])
         elif isinstance(n, list):
             raise Exception('Vector div on vector not supported')
+
+    def _scalarToVector(self, value):
+        newVec = Vector()
+        for i in range(len(self)):
+            newVec.append(value)
+        return newVec
 
     def dot(self, vec):
         """Return dot product of two vectors
@@ -91,6 +101,9 @@ class Vector(list):
 
     @property
     def length(self):
+        """ return scalar length of vector
+        :return: float
+        """
         sum = 0
         for value in self:
             sum += value ** 2
@@ -190,7 +203,7 @@ class Transform(object):
         self._position = Vector(value)
 
 
-class PLane(Transform):
+class Plane(Transform):
     def getDistanceFromPointToSurface(self, point: Vector):
         return point.y - self.position.y
 
@@ -208,8 +221,4 @@ class Sphere(Transform):
 
 
 class Camera(Transform):
-    @property
-    def direction(self):
-        normPos = self.position.noramlized()
-        normPos.z = 1
-        return normPos
+    pass
