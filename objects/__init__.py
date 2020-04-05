@@ -51,9 +51,21 @@ class Vector(list):
             raise Exception('Vector div on vector not supported')
 
     def noramlized(self):
+        """return normalized vector
+        :return: Vector
+        >>> Vector((0,2,0)).noramlized()
+        Vector:(0.0, 1.0, 0.0)
+        >>> Vector((156,0,0)).noramlized()
+        Vector:(1.0, 0.0, 0.0)
+        >>> Vector((0,0,5432)).noramlized()
+        Vector:(0.0, 0.0, 1.0)
+        """
         result = Vector()
+        lenght = self.length
+        invLenght = 1/lenght
+
         for i, val in enumerate(self):
-            result.append(self[i]/self.length)
+            result.append(self[i] * invLenght)
         return result
 
     def distance(self, vec):
@@ -179,7 +191,7 @@ class Sphere(Transform):
         self.radius = radius
 
     def getDistanceFromPointToSurface(self, point: Vector):
-        distance = point.distance(self.position) - self.radius
+        distance = self.position.distance(point) - self.radius
         return distance
 
 
