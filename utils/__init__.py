@@ -3,31 +3,38 @@ import objects
 
 
 def rayMarch(
-        camera: objects.Camera,
+        point: objects.Vector,
         camDirection: objects.Vector,
         scene: list,
         maxSteps=100,
-        maxDistance=100,
+        maxDistance=255,
         minDistance=.1
 ) -> float:
     dist = 0
 
     for i in range(maxSteps):
-        curPoint = camera.position + camDirection * dist
-        distSurf = getMinDistance(curPoint, scene)
+        curPoint = point + camDirection * dist
+        distSurf = getDistance(curPoint, scene)
         dist += distSurf
-        if distSurf > maxDistance or distSurf < minDistance:
+        if dist > maxDistance or distSurf < minDistance:
             break
     return dist
 
 
-def getMinDistance(point: objects.Vector, scene: List[objects.Transform]) -> float:
+def clamp(x, a, b):
+    return max(a, min(b, x))
+
+
+def getDistance(point: objects.Vector, scene: List[objects.Transform]) -> float:
+    """ Calculate distance from all objects ещ point from scene and return that distance
+    :param point: objects.Vector
+    :param scene: list
+    :return:
+    >>> getDistance(objects.Vector((0, 0, 0)), [objects.Sphere((0,1,0), 1), objects.Plane((0, -40, 0))])
+    0.7320508075688772
+    """
     allDist = []
     for obj in scene:
         dist = obj.getDistanceFromPointToSurface(point)
-        if dist >= 0:
-            allDist.append(dist)
-        else:
-            allDist.append(0)
-
+        allDist.append(dist)
     return min(allDist)
