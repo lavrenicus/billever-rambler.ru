@@ -50,6 +50,18 @@ class Vector(list):
         elif isinstance(n, list):
             raise Exception('Vector div on vector not supported')
 
+    def dot(self, vec):
+        """Return dot product of two vectors
+        >>> Vector((1,3,-5)).dot(Vector((4,-2,-1)))
+        3
+        """
+        if len(self) != len(vec):
+            raise BadParametersException('Vector dimensions mismatch')
+        summ = 0
+        for index, value in enumerate(self):
+            summ += self[index] * vec[index]
+        return summ
+
     def noramlized(self):
         """return normalized vector
         :return: Vector
