@@ -1,10 +1,7 @@
 import os
 import tempfile
 import time
-import sys
-from asyncore import dispatcher
 
-import numpy
 import pygame
 from pygame import gfxdraw
 
@@ -27,7 +24,7 @@ if not os.path.isfile(filePath):
     img = Image.new('RGB', (WIDTH, HEIGHT), color='white')
     print(filePath)
     point = cam.position
-    scene = [sphere, sphere2]  # , plane]
+    scene = [sphere, sphere2]  #, plane]
 
     pygame.init()
     surf = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -62,6 +59,7 @@ if not os.path.isfile(filePath):
                 img.putpixel((x, y), (int(diff), int(diff), int(diff)))
 
             pygame.display.update()
+            pygame.display.set_caption(f'{int((y/HEIGHT)*100)}%, time left: {int(time.time() - start)}')
             pygame.event.pump()
         print(time.time() - start)
         img.save(filePath)
