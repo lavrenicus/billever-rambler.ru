@@ -1,52 +1,38 @@
 import math
 import numpy
-from typing import List
 
 
 class BadParametersException(Exception):
     pass
 
 
-class Vector(list):
-    def __init__(self, *args):
-        super().__init__(*args)
+class Vector(object):
+    _array = None
+
+    def __init__(self, array):
+
+        self._array = numpy.array(array)
+
+    def __len__(self):
+        return self._array.__len__()
+
+    def __iter__(self):
+        return self._array.__iter__()
+
+    def __getitem__(self, item):
+        return self._array.__getitem__(item)
 
     def __sub__(self, vec):
-        if isinstance(vec, float) or isinstance(vec, int):
-            vec = self._scalarToVector(vec)
-        if len(self) != len(vec):
-            raise BadParametersException('Vector dimensions mismatch')
-        resultVector = []
-        for index, value in enumerate(self):
-            resultVector.append(self[index] - vec[index])
-        return Vector(resultVector)
+        return Vector(self._array - vec)
 
     def __add__(self, vec):
-        if isinstance(vec, float) or isinstance(vec, int):
-            vec = self._scalarToVector(vec)
-        if len(self) != len(vec):
-            raise BadParametersException('Vector dimensions mismatch')
-        resultVector = []
-        for index, value in enumerate(self):
-            resultVector.append(self[index] + vec[index])
-        return Vector(resultVector)
+        return Vector(self._array + vec)
 
     def __mul__(self, n):
-        if isinstance(n, list) and len(self) != len(n):
-            raise BadParametersException('Vector dimensions mismatch')
-        resultVector = []
-        for index, value in enumerate(self):
-            if isinstance(n, float):
-                resultVector.append(self[index] * n)
-            elif isinstance(n, int):
-                resultVector.append(self[index] * n)
-            elif isinstance(n, list):
-                resultVector.append(self[index] * n[index])
-
-        return Vector(resultVector)
+        return Vector(self._array * n)
 
     def __repr__(self) -> str:
-        return 'Vector:({})'.format(super().__repr__()[1:-1])
+        return 'Vector:({})'.format(self._array[1:-1])
 
     def __truediv__(self, n):
         if isinstance(n, int) or isinstance(n, float):
@@ -54,23 +40,30 @@ class Vector(list):
         elif isinstance(n, list):
             raise Exception('Vector div on vector not supported')
 
+    def __setitem__(self, key, value):
+        self._array[key] = value
+
     def _scalarToVector(self, value):
-        newVec = Vector()
+        newVec = Vector(numpy.zeros(len(self)))
         for i in range(len(self)):
-            newVec.append(value)
+            newVec[i] = value
         return newVec
+
+    def append(self, value):
+        self._array = numpy.array([*self._array, value])
 
     def dot(self, vec):
         """Return dot product of two vectors
         >>> Vector((1,3,-5)).dot(Vector((4,-2,-1)))
         3
         """
-        if len(self) != len(vec):
-            raise BadParametersException('Vector dimensions mismatch')
-        summ = 0
-        for index, value in enumerate(self):
-            summ += self[index] * vec[index]
-        return summ
+        # if len(self) != len(vec):
+        #     raise BadParametersException('Vector dimensions mismatch')
+        # summ = 0
+        # for index, value in enumerate(self):
+        #     summ += self[index] * vec[index]
+
+        return self._array.dot(vec)
 
     def noramlized(self):
         """return normalized vector
@@ -82,12 +75,12 @@ class Vector(list):
         >>> Vector((0,0,5432)).noramlized()
         Vector:(0.0, 0.0, 1.0)
         """
-        result = Vector()
+        result = Vector(numpy.zeros(len(self)))
         lenght = self.length
         invLenght = 1/lenght
 
         for i, val in enumerate(self):
-            result.append(self[i] * invLenght)
+            result[i] = self[i] * invLenght
         return result
 
     def distance(self, vec):
@@ -97,7 +90,7 @@ class Vector(list):
         for index, value in enumerate(self):
             dif = self[index] - vec[index]
             summ += dif ** 2
-        return math.sqrt(summ)
+        return numpy.sqrt(summ)
 
     @property
     def length(self):
@@ -107,7 +100,7 @@ class Vector(list):
         sum = 0
         for value in self:
             sum += value ** 2
-        return math.sqrt(sum)
+        return numpy.sqrt(sum)
 
     @property
     def x(self):
@@ -202,10 +195,16 @@ class Transform(object):
     def position(self, value):
         self._position = Vector(value)
 
+    def getNormal(self, point):
+        raise NotImplementedError()
+
 
 class Plane(Transform):
     def getDistanceFromPointToSurface(self, point: Vector):
         return point.y - self.position.y
+
+    def getNormal(self, point):
+        return Vector((0, 1, 0)).noramlized()
 
 
 class Sphere(Transform):
@@ -218,6 +217,9 @@ class Sphere(Transform):
     def getDistanceFromPointToSurface(self, point: Vector):
         distance = self.position.distance(point) - self.radius
         return distance
+
+    def getNormal(self, point):
+        return (self.position - point).noramlized()
 
 
 class Camera(Transform):
