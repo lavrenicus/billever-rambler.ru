@@ -1,2 +1,1 @@
-# billever-rambler.ru
 pythonRayMarching
