@@ -90,10 +90,10 @@ class Vector(list):
         """ return scalar length of vector
         :return: float
         """
-        sum = 0
+        summ = 0
         for value in self:
-            sum += value * value
-        return sqrt(sum)
+            summ += value * value
+        return sqrt(summ)
 
     @property
     def x(self):
@@ -117,7 +117,7 @@ class Vector(list):
 
     @z.setter
     def z(self, value):
-        self[1] = value
+        self[2] = value
 
 
 class VectorNP(numpy.ndarray):
@@ -131,18 +131,18 @@ class VectorNP(numpy.ndarray):
     def distance(self, vec):
         if self.shape != vec.shape:
             raise BadParametersException('Vector dimensions mismatch')
-        sum = 0
+        summ = 0
         for index, value in enumerate(self):
             dif = self[index] - vec[index]
-            sum += dif * dif
-        return numpy.sqrt(sum)
+            summ += dif * dif
+        return numpy.sqrt(summ)
 
     @property
     def length(self):
-        sum = 0
+        summ = 0
         for value in self:
-            sum += value * value
-        return numpy.sqrt(sum)
+            summ += value * value
+        return numpy.sqrt(summ)
 
     @property
     def x(self):
