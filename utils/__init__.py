@@ -39,7 +39,29 @@ def clamp(x, a, b):
     return max(a, min(b, x))
 
 
-def getDistance(point: Vector, scene: List[Transform]) -> tuple:
+def calculate_time(seconds):
+    """Return formatted string of time
+    :param seconds:
+    :return: formatted time
+    """
+    seconds = int(seconds)
+
+    minutes = seconds // 60
+    seconds = seconds % 60
+    hours = minutes // 60
+    minutes = minutes % 60
+
+    if hours:
+        result_str = f'{hours}h : {minutes}m : {seconds}s'
+    elif minutes:
+        result_str = f'{minutes}m : {seconds}s'
+    else:
+        result_str = f'{seconds}s'
+
+    return result_str
+
+
+def getDistance(point, scene: List[Transform]) -> tuple:
     """ Calculate distance from all objects ещ point from scene and return that distance
     :param point: Vector
     :param scene: list
